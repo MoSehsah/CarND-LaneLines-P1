@@ -4,10 +4,6 @@
 
 ### This is the writeup for the finding lane lines project which is part of Udacity self driving car Nano Degree
 
-[//]: # (Image References)
-
-[image1]: ./examples/grayscale.jpg "Grayscale"
-
 ---
 
 ### Reflection
@@ -61,22 +57,50 @@ final = weighted_img(hough_masked_canny_blur_gray, image)
 ```
 
 ---
+#### Line extrapolation Mechanism
+
+1. using slope caclulation to determine if the line segment is part of the left or right lane line
+```python
+# define empty points collections for left line and right line
+xl = []
+yl = []
+xr = []
+yr = []
+    
+#loop all lines and add based on slope to either lines points collection
+for line in lines:
+	for x1, y1, x2, y2 in line:
+		if x2==x1:
+			continue
+		slope = (y2-y1)/(x2-x1)
+		# line looks like \
+		if slope > 0.5 and slope < 0.9 :
+			xl += [x1, x2]
+            yl += [y1, y2]
+		elif slope < - 0.5 and slope > -0.9 : 
+			xr += [x1, x2]
+			yr += [y1, y2]
+```
+2. using numpy.polyfit as a straight line fit algorithm for both lines
+```python
+# straight line fit for the points
+coeffl = np.polyfit(xl, yl, 1)
+l = np.poly1d(coeffl)
+        
+# get points for line 
+x_newl = np.linspace(min(xl), (l - img.shape[0]).r, 20).astype(int)
+y_newl = l(x_newl).astype(int)
+points_newl = list(zip(x_newl, y_newl))
+```
+
+---
 
 
+### 2. Potential shortcomings
 
-![alt text][image1]
-
-
-### 2. Identify potential shortcomings with your current pipeline
-
-
-One potential shortcoming would be what would happen when ... 
-
-Another shortcoming could be ...
+* Currently any change in the angle for the camera would need further calibration for the region of interest
 
 
 ### 3. Suggest possible improvements to your pipeline
 
-A possible improvement would be to ...
-
-Another potential improvement could be to ...
+* Currently with the shadows in the last video affects the edge detection algorithm. - Needs Improvement - 
