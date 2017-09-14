@@ -55,7 +55,6 @@ masked_canny_blur_gray = region_of_interest(canny_blur_gray,vertices)
 ```
 
 5. Applying Hough Transform as well as 
-
 ```python
 hough_masked_canny_blur_gray = hough_lines(masked_canny_blur_gray, rho, theta, threshold, min_line_length, max_line_gap)  
 final = weighted_img(hough_masked_canny_blur_gray, image)
@@ -81,4 +80,3 @@ Another shortcoming could be ...
 A possible improvement would be to ...
 
 Another potential improvement could be to ...
-
